@@ -1,165 +1,217 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Heart, HeartCrack } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff1f2;
+            font-family: Arial, sans-serif;
+        }
 
-const ValentinePage = () => {
-  const [globalResponse, setGlobalResponse] = useState(null);
-  const [noCount, setNoCount] = useState(0);
-  const [noButtonPosition, setNoButtonPosition] = useState({ top: 0, left: 0 });
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
 
-  // Safely handle localStorage access inside useEffect
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem('valentineResponse');
-      if (saved) {
-        setGlobalResponse(saved);
-      }
-    } catch (error) {
-      console.error('Error accessing localStorage:', error);
-    }
-  }, []);
+        .image {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
 
-  const handleYes = () => {
-    try {
-      const response = 'yes';
-      setGlobalResponse(response);
-      window.localStorage.setItem('valentineResponse', response);
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
-    }
-  };
+        h1 {
+            color: #db2777;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
 
-  const handleNo = () => {
-    setNoCount(noCount + 1);
-    setNoButtonPosition({
-      top: Math.random() * 200 - 100,
-      left: Math.random() * 200 - 100,
-    });
-    
-    if (noCount >= 3) {
-      try {
-        const response = 'no';
-        setGlobalResponse(response);
-        window.localStorage.setItem('valentineResponse', response);
-      } catch (error) {
-        console.error('Error saving to localStorage:', error);
-      }
-    }
-  };
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
 
-  const getResponseMessage = () => {
-    if (globalResponse === 'yes') {
-      return (
-        <div className="flex flex-col items-center justify-center space-y-8">
-          {/* Top floating hearts */}
-          <div className="relative w-full h-32">
-            {[...Array(5)].map((_, i) => (
-              <Heart 
-                key={`top-${i}`} 
-                className={`absolute w-8 h-8 text-pink-500 animate-bounce`}
-                style={{ 
-                  left: `${i * 25}%`,
-                  animationDelay: `${i * 0.3}s`,
-                  animationDuration: '2s'
-                }}
-              />
-            ))}
-          </div>
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
 
-          {/* Main celebration message */}
-          <div className="relative transform transition-all animate-pulse">
-            <Heart className="w-32 h-32 text-red-500 animate-bounce mx-auto" />
-            <h1 className="text-5xl font-bold text-pink-600 mt-4 animate-pulse">
-              YAYYYYYYY! 🎉
-            </h1>
-            <h2 className="text-4xl font-bold text-pink-500 mt-2 animate-pulse">
-              SHE SAID YES! 💖
-            </h2>
-          </div>
+        .yes-btn {
+            background-color: #ec4899;
+            color: white;
+        }
 
-          {/* Decorative elements */}
-          <div className="flex justify-center items-center gap-4 mt-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={`deco-${i}`} className="flex flex-col items-center animate-bounce" style={{ animationDelay: `${i * 0.2}s` }}>
-                <Heart className="w-12 h-12 text-red-400" />
-                <Heart className="w-8 h-8 text-pink-400 -mt-2" />
-                <Heart className="w-6 h-6 text-rose-400 -mt-2" />
-              </div>
-            ))}
-          </div>
+        .yes-btn:hover {
+            background-color: #db2777;
+            transform: scale(1.05);
+        }
 
-          {/* Bottom celebration text */}
-          <p className="text-2xl font-semibold text-pink-400 mt-4">
-            hehe love youuuuuuu
-          </p>
+        .no-btn {
+            background-color: #6b7280;
+            color: white;
+            position: relative;
+        }
 
-          {/* Bottom floating hearts */}
-          <div className="relative w-full h-24">
-            {[...Array(5)].map((_, i) => (
-              <Heart 
-                key={`bottom-${i}`} 
-                className={`absolute w-6 h-6 text-red-400 animate-bounce`}
-                style={{ 
-                  right: `${i * 25}%`,
-                  animationDelay: `${i * 0.2}s`,
-                  animationDuration: '1.5s'
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      );
-    }
-    if (globalResponse === 'no') {
-      return (
-        <div className="flex flex-col items-center space-y-4">
-          <HeartCrack className="w-24 h-24 text-gray-500" />
-          <h1 className="text-4xl font-bold text-gray-600">Nooo... 😢</h1>
-          <p className="text-xl text-gray-500">Maybe next time...</p>
-        </div>
-      );
-    }
-    return null;
-  };
+        .no-btn:hover {
+            background-color: #4b5563;
+        }
 
-  return (
-    <div className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-8 text-center space-y-8">
-        {!globalResponse ? (
-          <>
-            <img
-              src="/api/placeholder/400/300"
-              alt="Valentine's hearts"
-              className="mx-auto rounded-lg shadow-md"
-            />
-            <h1 className="text-3xl font-bold text-pink-600">Will you be my Valentine?</h1>
-            <div className="flex justify-center items-center space-x-4">
-              <Button
-                onClick={handleYes}
-                className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 text-xl"
-              >
-                Yes! 😊
-              </Button>
-              <div style={{ position: 'relative' }}>
-                <Button
-                  onClick={handleNo}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 text-xl"
-                  style={{
-                    transform: `translate(${noButtonPosition.left}px, ${noButtonPosition.top}px)`,
-                    transition: 'transform 0.2s ease-in-out',
-                  }}
-                >
-                  No 😔
-                </Button>
-              </div>
+        /* Success Message Styles */
+        .success {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .heart {
+            color: #ec4899;
+            font-size: 5rem;
+            margin: 1rem 0;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        .success h2 {
+            color: #db2777;
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            animation: bounce 2s infinite;
+        }
+
+        .hearts-container {
+            position: relative;
+            height: 100px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: #ec4899;
+            font-size: 1.5rem;
+            animation: float 3s infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100%) translateX(-50%); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100%) translateX(50%); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="question">
+            <img src="./images/valentine.jpg" alt="Valentine's hearts" class="image">
+            <h1>Will you be my Valentine?</h1>
+            <div class="buttons">
+                <button class="yes-btn" onclick="handleYes()">Yes! 😊</button>
+                <button class="no-btn" onmouseover="moveButton(this)" onclick="handleNo()">No 😔</button>
             </div>
-          </>
-        ) : (
-          getResponseMessage()
-        )}
-      </div>
-    </div>
-  );
-};
+        </div>
 
-export default ValentinePage;
+        <div id="success" class="success">
+            <div class="hearts-container">
+                <span class="floating-heart" style="left: 20%">❤️</span>
+                <span class="floating-heart" style="left: 40%">💖</span>
+                <span class="floating-heart" style="left: 60%">💝</span>
+                <span class="floating-heart" style="left: 80%">💗</span>
+            </div>
+            <div class="heart">❤️</div>
+            <h2>YAYYYYYYY! 🎉</h2>
+            <h2>SHE SAID YES! 💖</h2>
+            <div class="hearts-container">
+                <span class="floating-heart" style="left: 30%">💖</span>
+                <span class="floating-heart" style="left: 50%">💝</span>
+                <span class="floating-heart" style="left: 70%">❤️</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check for existing response
+        window.onload = function() {
+            const response = localStorage.getItem('valentineResponse');
+            if (response === 'yes') {
+                showSuccess();
+            }
+        }
+
+        let noCount = 0;
+
+        function handleYes() {
+            localStorage.setItem('valentineResponse', 'yes');
+            showSuccess();
+        }
+
+        function handleNo() {
+            noCount++;
+            if (noCount >= 3) {
+                handleYes(); // They tried to say no 3 times, count it as a yes!
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('question').style.display = 'none';
+            const success = document.getElementById('success');
+            success.style.display = 'block';
+            success.classList.add('show');
+        }
+
+        function moveButton(btn) {
+            if (noCount < 3) {
+                const container = btn.parentElement;
+                const containerRect = container.getBoundingClientRect();
+                const btnRect = btn.getBoundingClientRect();
+                
+                const maxX = containerRect.width - btnRect.width;
+                const maxY = containerRect.height - btnRect.height;
+                
+                const randomX = Math.random() * maxX - maxX / 2;
+                const randomY = Math.random() * maxY - maxY / 2;
+                
+                btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            }
+        }
+    </script>
+</body>
+</html>
