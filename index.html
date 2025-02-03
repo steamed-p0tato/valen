@@ -1,0 +1,165 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Heart, HeartCrack } from 'lucide-react';
+
+const ValentinePage = () => {
+  const [globalResponse, setGlobalResponse] = useState(null);
+  const [noCount, setNoCount] = useState(0);
+  const [noButtonPosition, setNoButtonPosition] = useState({ top: 0, left: 0 });
+
+  // Safely handle localStorage access inside useEffect
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem('valentineResponse');
+      if (saved) {
+        setGlobalResponse(saved);
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+    }
+  }, []);
+
+  const handleYes = () => {
+    try {
+      const response = 'yes';
+      setGlobalResponse(response);
+      window.localStorage.setItem('valentineResponse', response);
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
+  };
+
+  const handleNo = () => {
+    setNoCount(noCount + 1);
+    setNoButtonPosition({
+      top: Math.random() * 200 - 100,
+      left: Math.random() * 200 - 100,
+    });
+    
+    if (noCount >= 3) {
+      try {
+        const response = 'no';
+        setGlobalResponse(response);
+        window.localStorage.setItem('valentineResponse', response);
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+      }
+    }
+  };
+
+  const getResponseMessage = () => {
+    if (globalResponse === 'yes') {
+      return (
+        <div className="flex flex-col items-center justify-center space-y-8">
+          {/* Top floating hearts */}
+          <div className="relative w-full h-32">
+            {[...Array(5)].map((_, i) => (
+              <Heart 
+                key={`top-${i}`} 
+                className={`absolute w-8 h-8 text-pink-500 animate-bounce`}
+                style={{ 
+                  left: `${i * 25}%`,
+                  animationDelay: `${i * 0.3}s`,
+                  animationDuration: '2s'
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Main celebration message */}
+          <div className="relative transform transition-all animate-pulse">
+            <Heart className="w-32 h-32 text-red-500 animate-bounce mx-auto" />
+            <h1 className="text-5xl font-bold text-pink-600 mt-4 animate-pulse">
+              YAYYYYYYY! 🎉
+            </h1>
+            <h2 className="text-4xl font-bold text-pink-500 mt-2 animate-pulse">
+              SHE SAID YES! 💖
+            </h2>
+          </div>
+
+          {/* Decorative elements */}
+          <div className="flex justify-center items-center gap-4 mt-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={`deco-${i}`} className="flex flex-col items-center animate-bounce" style={{ animationDelay: `${i * 0.2}s` }}>
+                <Heart className="w-12 h-12 text-red-400" />
+                <Heart className="w-8 h-8 text-pink-400 -mt-2" />
+                <Heart className="w-6 h-6 text-rose-400 -mt-2" />
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom celebration text */}
+          <p className="text-2xl font-semibold text-pink-400 mt-4">
+            hehe love youuuuuuu
+          </p>
+
+          {/* Bottom floating hearts */}
+          <div className="relative w-full h-24">
+            {[...Array(5)].map((_, i) => (
+              <Heart 
+                key={`bottom-${i}`} 
+                className={`absolute w-6 h-6 text-red-400 animate-bounce`}
+                style={{ 
+                  right: `${i * 25}%`,
+                  animationDelay: `${i * 0.2}s`,
+                  animationDuration: '1.5s'
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+    if (globalResponse === 'no') {
+      return (
+        <div className="flex flex-col items-center space-y-4">
+          <HeartCrack className="w-24 h-24 text-gray-500" />
+          <h1 className="text-4xl font-bold text-gray-600">Nooo... 😢</h1>
+          <p className="text-xl text-gray-500">Maybe next time...</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4">
+      <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-8 text-center space-y-8">
+        {!globalResponse ? (
+          <>
+            <img
+              src="/api/placeholder/400/300"
+              alt="Valentine's hearts"
+              className="mx-auto rounded-lg shadow-md"
+            />
+            <h1 className="text-3xl font-bold text-pink-600">Will you be my Valentine?</h1>
+            <div className="flex justify-center items-center space-x-4">
+              <Button
+                onClick={handleYes}
+                className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 text-xl"
+              >
+                Yes! 😊
+              </Button>
+              <div style={{ position: 'relative' }}>
+                <Button
+                  onClick={handleNo}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 text-xl"
+                  style={{
+                    transform: `translate(${noButtonPosition.left}px, ${noButtonPosition.top}px)`,
+                    transition: 'transform 0.2s ease-in-out',
+                  }}
+                >
+                  No 😔
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : (
+          getResponseMessage()
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ValentinePage;
